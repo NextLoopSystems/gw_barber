@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8" />
+  <title>Gw Barber Oficial</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      background-color: #f8f9fa;
+    }
+    /* Cabeçalho customizado */
+    .custom-header {
+      background-color: #2f2f2f;
+      color: white;
+      padding: 10px 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .custom-header img {
+      border-radius: 50px;
+      height: 40px;
+    }
+    .custom-header h1 {
+      margin: 0;
+      flex-grow: 1;
+      text-align: center;
+      font-size: 1.5rem;
+    }
+    .custom-header button {
+      background: none;
+      border: 1px solid white;
+      color: white;
+      padding: 5px 10px;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 0.9rem;
+    }
+    .custom-header button:hover {
+      background-color: white;
+      color: #2f2f2f;
+    }
+
+    /* Tabela estilizada */
+    table {
+      width: 90%;
+      margin: 20px auto;
+      border-collapse: collapse;
+      background: white;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    }
+    th, td {
+      padding: 12px 15px;
+      border: 1px solid #ddd;
+      text-align: center;
+    }
+    th {
+      background-color: #343a40;
+      color: white;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+    tbody tr:nth-child(even) {
+      background-color: #f2f2f2;
+    }
+  </style>
+</head>
+<body>
+
+  <header class="custom-header">
+    <div><img src="Logo_GwJpg.jpg" alt="Logo" /></div>
+    <h1>Gw Barber Oficial</h1>
+    <div>
+      <button onclick="window.location.href='menu.html'">Menu</button>
+    </div>
+  </header>
+
+  <table id="tabelaVendas">
+    <thead>
+      <tr>
+        <th>Data de Venda</th>
+        <th>Barbeiro</th>
+        <th>Produto</th>
+        <th>Quantidade</th>
+        <th>Valor Unidade</th>
+      </tr>
+    </thead>
+    <tbody>
+      <!-- Dados serão inseridos aqui -->
+    </tbody>
+  </table>
+
+  <script>
+    const url = "https://script.google.com/macros/s/AKfycbx5zXVmS0TIdmOEBvUy3gGvV9tHP5_ASgF4DBs2t4WcBSqm10LnaANj__KeP7Gl4g/exec?tipo=venda";
+
+    // Formatar data dd/mm/yyyy HH:mm
+    function formatarData(dataStr) {
+      if (!dataStr) return "";
+      const d = new Date(dataStr);
+      if (isNaN(d)) return dataStr;
+      const dia = String(d.getDate()).padStart(2, '0');
+      const mes = String(d.getMonth() + 1).padStart(2, '0');
+      const ano = d.getFullYear();
+      const horas = String(d.getHours()).padStart(2, '0');
+      const minutos = String(d.getMinutes()).padStart(2, '0');
+      return `${dia}/${mes}/${ano} ${horas}:${minutos}`;
+    }
+
+    // Formatar valor em reais
+    function formatarValor(valor) {
+      if (!valor) return "";
+      let num = parseFloat(valor.toString().replace(/[^\d,.-]/g, '').replace(',', '.'));
+      if (isNaN(num)) return valor;
+      return num.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+    }
+
+    fetch(url)
+      .then(response => response.json())
+      .then(dados => {
+        const tbody = document.querySelector("#tabelaVendas tbody");
+        dados.forEach(linha => {
+          const tr = document.createElement("tr");
+          tr.innerHTML = `
+            <td>${formatarData(linha.timestamp)}</td>
+            <td>${linha.barbeiro || ""}</td>
+            <td>${linha.produto || ""}</td>
+            <td>${linha.quantidade || ""}</td>
+            <td>${formatarValor(linha.valor)}</td>
+          `;
+          tbody.appendChild(tr);
+        });
+      })
+      .catch(erro => {
+        console.error("Erro ao carregar dados:", erro);
+        alert("Não foi possível carregar os dados.");
+      });
+  </script>
+
+</body>
+</html>

@@ -1,0 +1,156 @@
+
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Gw Barber Oficial</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      background-color: #f8f9fa;
+    }
+    .custom-header {
+      background-color: #2f2f2f;
+      color: white;
+      padding: 10px 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .custom-header img {
+      border-radius: 50px;
+      height: 40px;
+    }
+    .custom-header h1 {
+      margin: 0;
+      flex-grow: 1;
+      text-align: center;
+      font-size: 1.5rem;
+    }
+    .custom-header button {
+      background: none;
+      border: 1px solid white;
+      color: white;
+      padding: 5px 10px;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 0.9rem;
+    }
+    .custom-header button:hover {
+      background-color: white;
+      color: #2f2f2f;
+    }
+
+    table {
+      width: 90%;
+      margin: 20px auto;
+      border-collapse: collapse;
+      background: white;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    }
+    th, td {
+      padding: 12px 15px;
+      border: 1px solid #ddd;
+      text-align: center;
+    }
+    th {
+      background-color: #2f2f2f;
+      color: white;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+    tbody tr:nth-child(even) {
+      background-color: #f2f2f2;
+    }
+    input[type="number"] {
+      width: 80px;
+      text-align: center;
+    }
+    button.save-btn, button.delete-btn {
+      padding: 5px 10px;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      color: white;
+    }
+    button.save-btn {
+      background-color: #2f2f2f;
+      margin-right: 5px;
+    }
+    button.save-btn:hover {
+      background-color: #454545;
+    }
+    button.delete-btn {
+      background-color: #d9534f;
+    }
+    button.delete-btn:hover {
+      background-color: #c9302c;
+    }
+  </style>
+</head>
+<body>
+
+<header class="custom-header">
+  <div><img src="Logo_GwJpg.jpg" alt="Logo" /></div>
+  <h1>Gw Barber Oficial</h1>
+  <div>
+    <button onclick="window.location.href='menu.html'">Menu</button>
+  </div>
+</header>
+
+<table id="tabelaEstoque">
+  <thead>
+    <tr>
+      <th>Nome do Produto</th>
+      <th>Quantidade</th>
+      <th>Valor Unidade</th>
+    </tr>
+  </thead>
+  <tbody>
+    <!-- Dados serão inseridos aqui -->
+  </tbody>
+</table>
+
+<script>
+  const urlGet = "https://script.google.com/macros/s/AKfycbzfioUNgN_1JDDbVeNdUPK10TSttst_D_4lRefhyr3JRcUHyUEi05JSjLNKgMq323Y/exec?tipo=estoque";
+  const urlPost = "https://script.google.com/macros/s/AKfycbzfioUNgN_1JDDbVeNdUPK10TSttst_D_4lRefhyr3JRcUHyUEi05JSjLNKgMq323Y/exec";
+
+  function formatarValor(valor) {
+    if (!valor) return "";
+    let num = parseFloat(valor.toString().replace(/[^\d,.-]/g, '').replace(',', '.'));
+    if (isNaN(num)) return valor;
+    return num.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+  }
+
+  function montarTabela() {
+    fetch(urlGet)
+      .then(res => res.json())
+      .then(dados => {
+        const tbody = document.querySelector("#tabelaEstoque tbody");
+        tbody.innerHTML = "";
+        dados.forEach(linha => {
+          const tr = document.createElement("tr");
+
+      tr.innerHTML = `
+        <td>${linha.nome_do_produto || ""}</td>
+        <td>${linha.quantidade || 0}</td>
+        <td>${parseFloat(linha.valor_Uni || 0).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}</td>
+
+        `;
+          
+          tbody.appendChild(tr);
+        });
+      })
+      .catch(err => {
+        console.error(err);
+        alert("Erro ao carregar os dados.");
+      });
+  }
+
+  montarTabela();
+</script>
+
+</body>
+</html>
